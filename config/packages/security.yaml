@@ -1,0 +1,36 @@
+security:
+    # Définition des firewalls
+    firewalls:
+        login:
+            pattern: ^/api/(login|register)
+            stateless: true
+            provider: app_user_provider
+            json_login:
+                check_path: /api/login
+                username_path: username
+                password_path: password
+
+        api:
+            pattern: ^/api/
+            stateless: true
+            jwt: ~
+            provider: app_user_provider
+
+    # Contrôle d'accès
+    access_control:
+        - { path: ^/api/login }
+        - { path: ^/api/register}
+        - { path: ^/api/admin, roles: ROLE_ADMIN }
+        - { path: ^/api, roles: ROLE_USER }
+
+    # Définition du provider pour l'utilisateur
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
+
+    # Définition du password hasher
+    password_hashers:
+        App\Entity\User:
+            algorithm: bcrypt
